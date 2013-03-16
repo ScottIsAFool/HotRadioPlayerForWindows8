@@ -1,0 +1,3 @@
+Hot Radio Player Privacy Policy:
+
+This app accesses the internet in order to stream the radio station to your app and get the details of what songs have been played, that is it. No information is sent out from the app.

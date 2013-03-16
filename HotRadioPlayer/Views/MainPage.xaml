@@ -1,0 +1,297 @@
+﻿<common:LayoutAwarePage x:Name="pageRoot"
+                        x:Class="HotRadioPlayer.Views.MainPage"
+                        DataContext="{Binding Main, Source={StaticResource Locator}}"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:local="using:HotRadioPlayer"
+                        xmlns:common="using:HotRadioPlayer.Common"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:controls="using:ScottIsAFool.Windows8.Controls"
+                        xmlns:converters="using:HotRadioPlayer.Converters"
+                        mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
+        <x:String x:Key="AppName">Hot Radio Player</x:String>
+        <converters:StringCaseConverter x:Key="StringCaseConverter" />
+
+        <DataTemplate x:Key="TrackTemplate">
+            <Grid HorizontalAlignment="Left">
+                <Image Source="{Binding BigImage}"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Stretch="Uniform" />
+                <Border Background="#C4000000"
+                        Visibility="{Binding NowPlayingVisibility}"
+                        VerticalAlignment="Top"
+                        Padding="5">
+                    <TextBlock Text="NOW PLAYING"
+                               Style="{StaticResource HeaderTextStyle}"
+                               FontWeight="Bold"
+                               FontSize="48" />
+                </Border>
+                <Border Background="#C4000000"
+                        VerticalAlignment="Bottom"
+                        Padding="5">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Artist, Converter={StaticResource StringCaseConverter}, ConverterParameter=false}"
+                                   FontWeight="Bold"
+                                   Style="{StaticResource TitleTextStyle}"
+                                   TextWrapping="Wrap"
+                                   Foreground="White"
+                                   FontSize="18" />
+                        <TextBlock Text="{Binding Title}"
+                                   Style="{StaticResource ItemTextStyle}" />
+                        <TextBlock Text="{Binding Time}"
+                                   Style="{StaticResource ItemTextStyle}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <local:HotRadioTemplateSelector x:Key="HotRadioTemplateSelector"
+                                        TrackDataTemplate="{StaticResource TrackTemplate}" />
+    </Page.Resources>
+
+    <Page.BottomAppBar>
+        <AppBar>
+            <Grid>
+                <Button HorizontalAlignment="Right"
+                        Style="{StaticResource RefreshAppBarButtonStyle}"
+                        Command="{Binding RefreshCommand}" />
+            </Grid>
+        </AppBar>
+    </Page.BottomAppBar>
+
+    <!--
+        This grid acts as a root panel for the page that defines two rows:
+        * Row 0 contains the back button and page title
+        * Row 1 contains the rest of the page layout
+    -->
+    <Grid Style="{StaticResource LayoutRootStyle}"
+          x:Name="LayoutRoot">
+        <Grid.Background>
+            <ImageBrush ImageSource="/Assets/bgjpeg60.jpg"
+                        Opacity="0.3" />
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <controls:ExtendedProgressBar Text="{Binding ProgressText}"
+                                      Visibility="{Binding ProgressVisibility}"
+                                      IsIndeterminate="True"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Top" />
+
+        <MediaElement Source="http://stream1.tune-in.co.uk:7002/;stream.mp3"
+                      AutoPlay="False"
+                      AudioCategory="BackgroundCapableMedia"
+                      x:Name="MediaPlayer" />
+
+        <Grid Grid.Row="1"
+              Margin="100,0,0,0"
+              x:Name="LandscapeContent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+
+            <Grid Grid.Column="0"
+                  Margin="0,18,0,0"
+                  DataContext="{Binding OnAirNow}">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="ON AIR NOW"
+                               Style="{StaticResource HeaderTextStyle}"
+                               FontWeight="Bold" />
+                    <Image Source="{Binding ImageOnAir}"
+                           Height="250"
+                           Width="250"
+                           Margin="0,12,0,0"
+                           HorizontalAlignment="Left" />
+                    <TextBlock Text="{Binding Name}"
+                               Style="{StaticResource TitleTextStyle}" />
+                    <TextBlock Text="{Binding Times}"
+                               Style="{StaticResource TitleTextStyle}" />
+                    <HyperlinkButton Content="{Binding Email}"
+                                     HorizontalContentAlignment="Left"
+                                     VerticalContentAlignment="Top"
+                                     Padding="0"
+                                     Foreground="White"
+                                     Margin="-5,0,0,0"
+                                     Command="{Binding Main.LaunchEmailCommand, Source={StaticResource Locator}}"
+                                     CommandParameter="{Binding Email}" />
+                </StackPanel>
+            </Grid>
+
+            <controls:ReSizedGridView Grid.Column="1"
+                                      VerticalAlignment="Top"
+                                      ItemsSource="{Binding RecentlyPlayed}"
+                                      SelectionMode="None"
+                                      IsSwipeEnabled="False"
+                                      ItemTemplate="{StaticResource TrackTemplate}">
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VariableSizedWrapGrid ItemHeight="200"
+                                               ItemWidth="200" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </controls:ReSizedGridView>
+
+        </Grid>
+
+        <Grid Grid.Row="1"
+              x:Name="SnappedContent"
+              Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="4*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal"
+                        DataContext="{Binding OnAirNow}"
+                        Margin="6,0,0,0">
+                <Image Source="{Binding ImageOnAir}" />
+                <StackPanel Orientation="Vertical"
+                            Margin="6,0,0,0">
+                    <TextBlock Text="ON AIR NOW"
+                               Style="{StaticResource SnappedPageHeaderTextStyle}"
+                               FontWeight="Bold"
+                               Margin="0,-8,0,0" />
+                    <TextBlock Text="{Binding Name}"
+                               Style="{StaticResource TitleTextStyle}" />
+                    <TextBlock Text="{Binding Times}"
+                               Style="{StaticResource TitleTextStyle}" />
+                    <HyperlinkButton Content="{Binding Email}"
+                                     HorizontalContentAlignment="Left"
+                                     VerticalContentAlignment="Top"
+                                     Padding="0"
+                                     Foreground="White"
+                                     Margin="-5,0,0,0"
+                                     Command="{Binding Main.LaunchEmailCommand, Source={StaticResource Locator}}"
+                                     CommandParameter="{Binding Email}" />
+                </StackPanel>
+            </StackPanel>
+
+            <ListView Grid.Row="1"
+                      ItemsSource="{Binding RecentlyPlayed}"
+                      SelectionMode="None"
+                      IsSwipeEnabled="False"
+                      Margin="0,12,0,0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <Image Source="{Binding Image}"
+                                       MaxHeight="100"
+                                       MaxWidth="100" />
+                                <Border Visibility="{Binding NowPlayingVisibility}"
+                                        Background="#C4000000"
+                                        VerticalAlignment="Top"
+                                        HorizontalAlignment="Left">
+                                    <Image Source="/Assets/HeadPhones.png" />
+                                </Border>
+                            </Grid>
+                            <StackPanel Orientation="Vertical"
+                                        Margin="6,0,0,0">
+                                <TextBlock Text="{Binding Artist, Converter={StaticResource StringCaseConverter}, ConverterParameter=false}"
+                                           Style="{StaticResource SubtitleTextStyle}"
+                                           FontWeight="Bold"
+                                           FontSize="20"
+                                           VerticalAlignment="Top"
+                                           Margin="0,-2,0,0" />
+                                <TextBlock Text="{Binding Title}"
+                                           Style="{StaticResource ItemTextStyle}" />
+                                <TextBlock Text="{Binding Time}"
+                                           Style="{StaticResource ItemTextStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+
+        </Grid>
+
+        <!-- Back button and page title -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="backButton"
+                    Click="PlayButtonClick"
+                    Style="{StaticResource PlayAppBarButtonStyle}"
+                    Margin="0,45,0,0" />
+            <!--<TextBlock x:Name="pageTitle"
+                       Grid.Column="1"
+                       Text="{StaticResource AppName}"
+                       Style="{StaticResource PageHeaderTextStyle}" />-->
+            <Image Source="/Assets/HotRadioPlayerTitle.png"
+                   x:Name="pageTitle"
+                   Grid.Column="1"
+                   MaxHeight="50"
+                   HorizontalAlignment="Left"
+                   Margin="0,12,0,0" />
+        </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+
+            <!-- Visual states reflect the application's view state -->
+            <VisualStateGroup x:Name="ApplicationViewStates">
+                <VisualState x:Name="FullScreenLandscape" />
+                <VisualState x:Name="Filled" />
+
+                <!-- The entire page respects the narrower 100-pixel margin convention for portrait -->
+                <VisualState x:Name="FullScreenPortrait">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton"
+                                                       Storyboard.TargetProperty="Style">
+                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                    Value="{StaticResource PortraitBackButtonStyle}" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+                <!-- The back button and title have different styles when snapped -->
+                <VisualState x:Name="Snapped">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle"
+                                                       Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                    Value="-12,10,0,0" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle"
+                                                       Storyboard.TargetProperty="MaxWidth">
+                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                    Value="220" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LandscapeContent"
+                                                       Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                    Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SnappedContent"
+                                                       Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                    Value="Visible" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot"
+                                                       Storyboard.TargetProperty="Background">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <ImageBrush ImageSource="/Assets/bgjpeg60-snapped.jpg"
+                                                Opacity="0.4" />
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</common:LayoutAwarePage>

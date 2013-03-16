@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
+  <Identity Name="43233ScottLovegrove.HotRadioPlayer" Publisher="CN=43EE5435-230A-4364-8907-04B5F073D610" Version="1.0.0.0" />
+  <Properties>
+    <DisplayName>Hot Radio Player</DisplayName>
+    <PublisherDisplayName>ScottLovegrove</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Prerequisites>
+    <OSMinVersion>6.2.1</OSMinVersion>
+    <OSMaxVersionTested>6.2.1</OSMaxVersionTested>
+  </Prerequisites>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="HotRadioPlayer.App">
+      <VisualElements DisplayName="Hot Radio Player" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="Hot Radio is a local radio station for Bournemouth and Poole in the UK. It operates on 102.8FM. They also have an internet stream for the station and this app provides you access to that stream as well as all the details of what song is playing now. This app is an unofficial app and is in no way endorsed by Hot Radio themselves." ForegroundText="light" BackgroundColor="#000000">
+        <DefaultTile ShowName="noLogos" WideLogo="Assets\WideTile.png" />
+        <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
+        <InitialRotationPreference>
+          <Rotation Preference="landscape" />
+        </InitialRotationPreference>
+      </VisualElements>
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" StartPage="MainPage.xaml">
+          <BackgroundTasks>
+            <Task Type="audio" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>
